@@ -16,7 +16,7 @@ public:
 
 	std::tuple<std::string, int> fetch(const std::string& service_name)
 	{
-		return{};
+		return std::make_tuple("host", 9000);
 	}
 };
 
