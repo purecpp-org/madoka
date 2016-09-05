@@ -54,5 +54,8 @@ int main()
 	registry reg;
 	sp->register_handler("regist_service", &registry::regist_service, &reg);
 
+	sp->run();
+
+	getchar();
 	return 0;
 }
