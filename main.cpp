@@ -1,6 +1,7 @@
 #include <iostream>
 #include <rest_rpc/server.hpp>
 #include "registry.hpp"
+#include "load_blancer.hpp"
 
 struct configure
 {
@@ -53,6 +54,10 @@ int main()
 
 	registry reg;
 	sp->register_handler("regist_service", &registry::regist_service, &reg);
+	sp->register_handler("un_regist_service", &registry::un_regist_service, &reg);
+
+	load_blancer bl;
+	sp->register_handler("fetch", &load_blancer::fetch, &bl);
 
 	sp->run();
 

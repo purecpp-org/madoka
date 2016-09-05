@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <rest_rpc/client.hpp>
+#include <tuple>
 
 struct configure
 {
@@ -31,9 +32,12 @@ configure get_config()
 	return cfg;
 }
 
+using my_type = std::tuple<std::string, int>;
 namespace client
 {
 	TIMAX_DEFINE_PROTOCOL(regist_service, bool(const std::string&, const std::string&, int));
+	TIMAX_DEFINE_PROTOCOL(un_regist_service, bool(const std::string&, const std::string&, int));
+	TIMAX_DEFINE_PROTOCOL(fetch, my_type(const std::string&));
 }
 
 int main()
@@ -54,6 +58,10 @@ int main()
 	{
 		bool r = client.call(client::regist_service, "myservice"s, "192.168.2.103"s, 9000);
 		std::cout << r << std::endl;
+
+		r = client.call(client::un_regist_service, "myservice");
+
+		client.call(client::fetch, "myservice");
 	}
 	catch (const std::exception& ex)
 	{
