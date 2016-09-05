@@ -35,8 +35,8 @@ configure get_config()
 using my_type = std::tuple<std::string, int>;
 namespace client
 {
-	TIMAX_DEFINE_PROTOCOL(regist_service, bool(const std::string&, const std::string&, int));
-	TIMAX_DEFINE_PROTOCOL(un_regist_service, bool(const std::string&, const std::string&, int));
+	TIMAX_DEFINE_PROTOCOL(register_service, bool(const std::string&, const std::string&, int));
+	TIMAX_DEFINE_PROTOCOL(unregister_service, bool(const std::string&, const std::string&, int));
 	TIMAX_DEFINE_PROTOCOL(fetch, my_type(const std::string&));
 }
 
@@ -56,10 +56,10 @@ int main()
 
 	try
 	{
-		bool r = client.call(client::regist_service, "myservice"s, "192.168.2.103"s, 9000);
+		bool r = client.call(client::register_service, "myservice", "192.168.2.103", 9000);
 		std::cout << r << std::endl;
 
-		r = client.call(client::un_regist_service, "myservice", "192.168.2.103"s, 9000);
+		r = client.call(client::unregister_service, "myservice", "192.168.2.103", 9000);
 
 		std::tuple<std::string, int> result = client.call(client::fetch, "myservice"); //return ip and port
 		std::cout << "host name: " << std::get<0>(result) << ", port: " << std::get<1>(result) << std::endl;
