@@ -26,7 +26,8 @@ configure get_config()
 	}
 	catch (const std::exception& e)
 	{
-		timax::SPD_LOG_ERROR(e.what());
+		//timax::SPD_LOG_ERROR(e.what());
+		std::cout << e.what() << std::endl;
 	}
 
 	return cfg;
@@ -61,7 +62,7 @@ int main()
 	using codec_type = msgpack_codec;
 	using namespace std;
 
-	timax::log::get().init("rest_rpc_client.lg");
+//	timax::log::get().init("rest_rpc_client.lg");
 	auto cfg = get_config();
 
 	using my_sync_client = timax::rpc::sync_client<timax::rpc::msgpack_codec>;
@@ -70,17 +71,28 @@ int main()
 
 	try
 	{
-		auto r = client.call(client::register_service, "myservice", "192.168.2.103", 9000);
+		auto r = client.call(client::register_service, "myservice", "192.168.2.101", 9000);
 		std::cout << r.host_name << std::endl;
 
 //		bool b = client.call(client::unregister_service, "myservice", "192.168.2.103", 9000);
 
 		std::tuple<std::string, int> result = client.call(client::fetch, "myservice"); //return ip and port
 		std::cout << "host name: " << std::get<0>(result) << ", port: " << std::get<1>(result) << std::endl;
+		result = client.call(client::fetch, "myservice"); //return ip and port
+		std::cout << "host name: " << std::get<0>(result) << ", port: " << std::get<1>(result) << std::endl;
+		result = client.call(client::fetch, "myservice"); //return ip and port
+		std::cout << "host name: " << std::get<0>(result) << ", port: " << std::get<1>(result) << std::endl;
+		result = client.call(client::fetch, "myservice"); //return ip and port
+		std::cout << "host name: " << std::get<0>(result) << ", port: " << std::get<1>(result) << std::endl;
+		result = client.call(client::fetch, "myservice"); //return ip and port
+		std::cout << "host name: " << std::get<0>(result) << ", port: " << std::get<1>(result) << std::endl;
 	}
 	catch (const std::exception& ex)
 	{
-		timax::SPD_LOG_ERROR(ex.what());
+		//timax::SPD_LOG_ERROR(ex.what());
+		std::cout << ex.what() << std::endl;
 	}
+
+	getchar();
 	return 0;
 }

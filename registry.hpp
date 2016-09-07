@@ -8,6 +8,7 @@
 class registry
 {
 public:
+	registry() = default;
 	address register_service(const std::string& service_name, const std::string& host_name, int port)
 	{
 		return { service_name, host_name, port };
@@ -55,7 +56,14 @@ public:
 	}
 
 private:
+	friend class load_blancer;
 
+	std::multimap<std::string, entity> get_services()
+	{
+		std::unique_lock<std::mutex> lock(mtx_);
+		return map_;
+	}
+	registry(const registry&) = delete;
 	std::multimap<std::string, entity> map_;
 	std::mutex mtx_;
 };

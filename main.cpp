@@ -56,7 +56,7 @@ int main()
 	sp->register_handler("register_service", &registry::register_service, &reg, [&reg](auto conn, auto r) { reg.set_conn(conn, r); });
 	sp->register_handler("unregister_service", &registry::unregister_service, &reg);
 	sp->set_disconnect_handler(std::bind(&registry::handle_disconnect, &reg, std::placeholders::_1));
-	load_blancer bl;
+	load_blancer bl(reg);
 	sp->register_handler("fetch", &load_blancer::fetch, &bl);
 
 	sp->run();
