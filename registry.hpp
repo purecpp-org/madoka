@@ -44,8 +44,8 @@ public:
 		{
 			if (it->second.conn.get() == conn)
 			{
+				std::cout << it->second.addr.host_name << " offline" << std::endl;
 				it = map_.erase(it);
-				std::cout << it->second.addr.host_name<<" down" << std::endl;
 			}
 			else
 			{

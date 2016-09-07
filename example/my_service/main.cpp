@@ -73,7 +73,7 @@ int main()
 		auto r = client.call(client::register_service, "myservice", "192.168.2.103", 9000);
 		std::cout << r.host_name << std::endl;
 
-		bool b = client.call(client::unregister_service, "myservice", "192.168.2.103", 9000);
+//		bool b = client.call(client::unregister_service, "myservice", "192.168.2.103", 9000);
 
 		std::tuple<std::string, int> result = client.call(client::fetch, "myservice"); //return ip and port
 		std::cout << "host name: " << std::get<0>(result) << ", port: " << std::get<1>(result) << std::endl;
