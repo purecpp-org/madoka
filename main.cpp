@@ -53,7 +53,7 @@ int main()
 	auto sp = std::make_shared<server<codec_type>>(port, thread_num);
 
 	registry reg;
-	sp->register_handler("register_service", &registry::register_service, &reg);
+	sp->register_handler("register_service", &registry::register_service, &reg, [&reg](auto conn, auto r) { reg.set_conn(conn, r); });
 	sp->register_handler("unregister_service", &registry::unregister_service, &reg);
 
 	load_blancer bl;

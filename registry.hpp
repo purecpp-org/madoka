@@ -2,15 +2,15 @@
 #include <string>
 #include <map>
 #include <mutex>
+
+#include "common.h"
+
 class registry
 {
 public:
-
-	bool register_service(const std::string& service_name, const std::string& host_name, int port)
+	address register_service(const std::string& service_name, const std::string& host_name, int port)
 	{
-		std::unique_lock<std::mutex> lock;
-		map_.emplace(service_name, entity{ host_name, port });
-		return false;
+		return { service_name, host_name, port };
 	}
 
 	bool unregister_service(const std::string& service_name, const std::string& host_name, int port)
@@ -18,7 +18,7 @@ public:
 		std::unique_lock<std::mutex> lock;
 		for (auto it = map_.cbegin(); it != map_.end();)
 		{
-			if (it->first == service_name && it->second == entity{ host_name ,port})
+			if (it->first == service_name && it->second == entity{ service_name, host_name ,port})
 			{
 				it = map_.erase(it);
 			}
@@ -27,25 +27,17 @@ public:
 				++it;
 			}
 		}
-		return false;
+		return true;
+	}
+
+	void set_conn(std::shared_ptr<connection<msgpack_codec>> conn, const address& addr)
+	{
+		entity en = { addr, conn };
+		std::unique_lock<std::mutex> lock(mtx_);
+		map_.emplace(addr.service_name, en);
 	}
 
 private:
-	struct entity
-	{
-		std::string host_name;
-		int port;
-
-		bool operator ==(const entity& e) const
-		{
-			return host_name == e.host_name&&port == e.port;
-		}
-
-		bool operator !=(const entity& e) const
-		{
-			return host_name != e.host_name||port == e.port;
-		}
-	};
 
 	std::multimap<std::string, entity> map_;
 	std::mutex mtx_;

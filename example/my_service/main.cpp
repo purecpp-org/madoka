@@ -32,10 +32,24 @@ configure get_config()
 	return cfg;
 }
 
+struct address
+{
+	std::string service_name;
+	std::string host_name;
+	int port;
+
+	bool operator == (const address& adr) const
+	{
+		return adr.service_name == service_name&&adr.host_name == host_name&&adr.port == port;
+	}
+
+	MSGPACK_DEFINE(service_name, host_name, port);
+};
+
 using my_type = std::tuple<std::string, int>;
 namespace client
 {
-	TIMAX_DEFINE_PROTOCOL(register_service, bool(const std::string&, const std::string&, int));
+	TIMAX_DEFINE_PROTOCOL(register_service, address(const std::string&, const std::string&, int));
 	TIMAX_DEFINE_PROTOCOL(unregister_service, bool(const std::string&, const std::string&, int));
 	TIMAX_DEFINE_PROTOCOL(fetch, my_type(const std::string&));
 }
@@ -56,10 +70,10 @@ int main()
 
 	try
 	{
-		bool r = client.call(client::register_service, "myservice", "192.168.2.103", 9000);
-		std::cout << r << std::endl;
+		auto r = client.call(client::register_service, "myservice", "192.168.2.103", 9000);
+		std::cout << r.host_name << std::endl;
 
-		r = client.call(client::unregister_service, "myservice", "192.168.2.103", 9000);
+		bool b = client.call(client::unregister_service, "myservice", "192.168.2.103", 9000);
 
 		std::tuple<std::string, int> result = client.call(client::fetch, "myservice"); //return ip and port
 		std::cout << "host name: " << std::get<0>(result) << ", port: " << std::get<1>(result) << std::endl;
