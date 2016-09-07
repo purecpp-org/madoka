@@ -15,7 +15,7 @@ public:
 
 	bool unregister_service(const std::string& service_name, const std::string& host_name, int port)
 	{
-		std::unique_lock<std::mutex> lock;
+		std::unique_lock<std::mutex> lock(mtx_);
 		for (auto it = map_.cbegin(); it != map_.end();)
 		{
 			if (it->first == service_name && it->second == entity{ service_name, host_name ,port})
@@ -35,6 +35,23 @@ public:
 		entity en = { addr, conn };
 		std::unique_lock<std::mutex> lock(mtx_);
 		map_.emplace(addr.service_name, en);
+	}
+
+	void handle_disconnect(connection<msgpack_codec>* conn)
+	{
+		std::unique_lock<std::mutex> lock(mtx_);
+		for (auto it = map_.cbegin(); it != map_.end();)
+		{
+			if (it->second.conn.get() == conn)
+			{
+				it = map_.erase(it);
+				std::cout << it->second.addr.host_name<<" down" << std::endl;
+			}
+			else
+			{
+				++it;
+			}
+		}
 	}
 
 private:
